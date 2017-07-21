@@ -5,7 +5,7 @@ import 'dart:async';
 import 'package:jaguar_cache/jaguar_cache.dart';
 
 main() async {
-  final cache = new InMemoryCache();
+  final cache = new InMemoryCache(new Duration(minutes: 1));
 
   // Upsert
   cache.upsert('one', 1, new Duration(seconds: 5));

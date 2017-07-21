@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('InMemoryCache tests', () {
-    final cache = new InMemoryCache();
+    final cache = new InMemoryCache(new Duration(minutes: 1));
 
     setUp(() {});
 

@@ -9,7 +9,7 @@ final Exception cacheMiss = new Exception('Cache miss!');
 abstract class Cache {
   /// Set the given key/value in the cache, overwriting any existing value
   /// associated with that key
-  FutureOr upsert<T>(String key, T value, Duration expires);
+  FutureOr upsert<T>(String key, T value, [Duration expires]);
 
   /// Get the content associated with the given key
   FutureOr<T> read<T>(String key);
@@ -21,7 +21,7 @@ abstract class Cache {
   FutureOr remove<T>(String key);
 
   /// Set the given key/value in the cache ONLY IF the key already exists.
-  FutureOr replace<T>(String key, T v, Duration expires);
+  FutureOr replace<T>(String key, T v, [Duration expires]);
 }
 
 /// Cache item
@@ -45,11 +45,14 @@ class InMemoryCache implements Cache {
   /// Store
   final Map<String, CacheItem> _store = <String, CacheItem>{};
 
-  InMemoryCache();
+  final Duration defaultExpiry;
+
+  InMemoryCache(this.defaultExpiry);
 
   /// Set the given key/value in the cache, overwriting any existing value
   /// associated with that key
-  void upsert<T>(String key, T value, Duration expires) {
+  void upsert<T>(String key, T value, [Duration expires]) {
+    expires ??= defaultExpiry;
     _store[key] = new CacheItem.duration(value, expires);
   }
 
@@ -77,7 +80,8 @@ class InMemoryCache implements Cache {
   }
 
   /// Set the given key/value in the cache ONLY IF the key already exists.
-  void replace<T>(String key, T value, Duration expires) {
+  void replace<T>(String key, T value, [Duration expires]) {
+    expires ??= defaultExpiry;
     if (!_store.containsKey(key)) return;
 
     _store[key] = new CacheItem.duration(value, expires);
