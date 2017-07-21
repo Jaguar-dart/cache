@@ -2,8 +2,8 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
-import 'package:jaguar_serializer/serializer.dart';
 
+/// Exception thrown by the [Cache] implementation when there is a cache miss
 final Exception cacheMiss = new Exception('Cache miss!');
 
 abstract class Cache {
@@ -24,9 +24,12 @@ abstract class Cache {
   FutureOr replace<T>(String key, T v, Duration expires);
 }
 
+/// Cache item
 class CacheItem<VT> {
+  /// Time at which the item expires
   final DateTime expiry;
 
+  /// Value of the cache item
   final VT value;
 
   const CacheItem(this.value, this.expiry);
@@ -35,20 +38,19 @@ class CacheItem<VT> {
       : expiry = new DateTime.now().add(expire);
 }
 
+/// In memory cache implementation
 class InMemoryCache implements Cache {
   //TODO implement lock
 
-  final JsonRepo repo;
-
+  /// Store
   final Map<String, CacheItem> _store = <String, CacheItem>{};
 
-  InMemoryCache(this.repo);
+  InMemoryCache();
 
   /// Set the given key/value in the cache, overwriting any existing value
   /// associated with that key
   void upsert<T>(String key, T value, Duration expires) {
-    _store[key] =
-        new CacheItem.duration(repo.serialize(value, withType: true), expires);
+    _store[key] = new CacheItem.duration(value, expires);
   }
 
   /// Get the content associated with the given key
@@ -58,7 +60,12 @@ class InMemoryCache implements Cache {
     }
 
     final CacheItem item = _store[key];
-    return repo.deserialize(item, type: T);
+
+    if (new DateTime.now().isAfter(item.expiry)) {
+      throw cacheMiss;
+    }
+
+    return item.value;
   }
 
   /// Get the content associated multiple keys at once
@@ -73,7 +80,6 @@ class InMemoryCache implements Cache {
   void replace<T>(String key, T value, Duration expires) {
     if (!_store.containsKey(key)) return;
 
-    _store[key] =
-        new CacheItem.duration(repo.serialize(value, withType: true), expires);
+    _store[key] = new CacheItem.duration(value, expires);
   }
 }
