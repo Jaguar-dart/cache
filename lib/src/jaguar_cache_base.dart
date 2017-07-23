@@ -35,13 +35,11 @@ class CacheItem<VT> {
   const CacheItem(this.value, this.expiry);
 
   CacheItem.duration(this.value, Duration expire)
-      : expiry = new DateTime.now().add(expire);
+      : expiry = expire != null? new DateTime.now().add(expire): null;
 }
 
 /// In memory cache implementation
 class InMemoryCache implements Cache {
-  //TODO implement lock
-
   /// Store
   final Map<String, CacheItem> _store = <String, CacheItem>{};
 
@@ -53,6 +51,7 @@ class InMemoryCache implements Cache {
   /// associated with that key
   void upsert<T>(String key, T value, [Duration expires]) {
     expires ??= defaultExpiry;
+    if(expires != null && expires.isNegative) expires = null;
     _store[key] = new CacheItem.duration(value, expires);
   }
 
@@ -64,7 +63,9 @@ class InMemoryCache implements Cache {
 
     final CacheItem item = _store[key];
 
-    if (new DateTime.now().isAfter(item.expiry)) {
+    final now = new DateTime.now();
+
+    if (item.expiry is DateTime && now.isAfter(item.expiry)) {
       throw cacheMiss;
     }
 
@@ -81,9 +82,8 @@ class InMemoryCache implements Cache {
 
   /// Set the given key/value in the cache ONLY IF the key already exists.
   void replace<T>(String key, T value, [Duration expires]) {
-    expires ??= defaultExpiry;
     if (!_store.containsKey(key)) return;
 
-    _store[key] = new CacheItem.duration(value, expires);
+    upsert(key, value, expires);
   }
 }
