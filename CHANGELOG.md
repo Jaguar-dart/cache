@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- `clear` method to wipe the cache
+
 ## 0.2.0
 
 - Typed `Cache`

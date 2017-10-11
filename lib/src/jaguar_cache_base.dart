@@ -22,6 +22,9 @@ abstract class Cache<T> {
 
   /// Set the given key/value in the cache ONLY IF the key already exists.
   FutureOr replace(String key, T v, [Duration expires]);
+
+  /// Wipes all data in the cache
+  FutureOr clear();
 }
 
 /// Cache item
@@ -86,4 +89,7 @@ class InMemoryCache<T> implements Cache<T> {
 
     upsert(key, value, expires);
   }
+
+  /// Wipes all data in the cache
+  void clear() => _store.clear();
 }
