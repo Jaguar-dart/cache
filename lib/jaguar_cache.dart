@@ -1,11 +1,10 @@
 // Copyright (c) 2017, teja. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-/// Support for doing something awesome.
+/// This package defines a [Cache] interface
 ///
-/// More dartdocs go here.
+/// It also provides [InMemoryCache], an in-memory non-persistent cache
+/// implementation
 library jaguar_cache;
 
 export 'src/jaguar_cache_base.dart';
-
-// TODO: Export any libraries intended for clients of this package.

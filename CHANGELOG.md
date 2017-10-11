@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0
+
+- Typed `Cache`
+
 ## 0.1.2
 
 - Negative or null `expiry` means, no expiration
