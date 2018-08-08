@@ -9,7 +9,7 @@ final Exception cacheMiss = new Exception('Cache miss!');
 abstract class Cache<T> {
   /// Set the given key/value in the cache, overwriting any existing value
   /// associated with that key
-  FutureOr upsert(String key, T value, [Duration expires]);
+  FutureOr<void> upsert(String key, T value, [Duration expires]);
 
   /// Get the content associated with the given key
   FutureOr<T> read(String key);
@@ -18,13 +18,13 @@ abstract class Cache<T> {
   FutureOr<List<T>> readMany(List<String> keys);
 
   /// Deletes the given key from the cache
-  FutureOr remove(String key);
+  FutureOr<void> remove(String key);
 
   /// Set the given key/value in the cache ONLY IF the key already exists.
-  FutureOr replace(String key, T v, [Duration expires]);
+  FutureOr<void> replace(String key, T v, [Duration expires]);
 
   /// Wipes all data in the cache
-  FutureOr clear();
+  FutureOr<void> clear();
 }
 
 /// Cache item
